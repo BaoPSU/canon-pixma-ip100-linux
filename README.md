@@ -1,178 +1,124 @@
 # Canon PIXMA iP100 on Linux (Ubuntu 24.04)
 
-Full setup guide for the Canon PIXMA iP100 using Canon's official driver (`cnijfilter`) on Ubuntu 24.04. Gets you near the hardware's full **9600 × 2400 dpi** — far above what the generic Gutenprint driver can do (~600 dpi).
+Setup guide for the Canon PIXMA iP100 on Ubuntu 24.04 using the **Gutenprint** driver — the reliable daily driver for this printer on modern Ubuntu.
+
+> **Note on the Canon official driver:** `cnijfilter 3.70` was tested but has a compatibility issue on Ubuntu 24.04 that causes it to send only a job header (88 bytes) with no page data, making the printer hang silently. Gutenprint is the working solution.
 
 ---
 
-## Most Common Settings
-
-These are the settings you'll actually change day-to-day. Run any `lpoptions` command in a terminal to apply it as the new default.
-
-### Print Quality (`CNQuality`)
+## Quick Start
 
 ```bash
-# Everyday use — high quality, reasonable speed (RECOMMENDED DEFAULT)
-lpoptions -p iP100-Canon -o CNQuality=2
+# Blacklist usblp (blocks CUPS from reaching the printer)
+sudo modprobe -r usblp
+echo "blacklist usblp" | sudo tee /etc/modprobe.d/blacklist-usblp.conf
 
-# Maximum quality — for photos on photo paper (slow)
-lpoptions -p iP100-Canon -o CNQuality=1
+# Apply max quality settings
+lpoptions -p iP100-2 \
+    -o Resolution=612x600dpi \
+    -o StpColorPrecision=Best \
+    -o StpDitherAlgorithm=HybridEvenTone \
+    -o StpImageType=Photo \
+    -o StpColorCorrection=Accurate \
+    -o ColorModel=RGB \
+    -o print-color-mode=color
 
-# Draft — fast, lower quality, good for internal docs
-lpoptions -p iP100-Canon -o CNQuality=3
-```
+# Set as system default
+lpoptions -d iP100-2
 
-| Value | Quality | Speed | Best For |
-|-------|---------|-------|----------|
-| 1 | Maximum (9600×2400 dpi) | Very slow | Photo paper, final prints |
-| **2** | **High (recommended)** | **Fast** | **Documents, casual photos, everyday** |
-| 3 | Standard | Faster | Drafts |
-| 4 | Low | Fast | Internal drafts |
-| 5 | Draft | Fastest | Quick proofs |
-
-### Media / Paper Type (`MediaType`)
-
-```bash
-# Plain paper — everyday printing
-lpoptions -p iP100-Canon -o MediaType=plain
-
-# Glossy Photo Paper
-lpoptions -p iP100-Canon -o MediaType=glossypaper
-
-# Photo Paper Plus Glossy II — highest gloss
-lpoptions -p iP100-Canon -o MediaType=glossygold
-
-# Photo Paper Pro — professional photos
-lpoptions -p iP100-Canon -o MediaType=prophoto
-
-# Matte Photo Paper
-lpoptions -p iP100-Canon -o MediaType=matte
-```
-
-| Value | Paper |
-|-------|-------|
-| `plain` | Plain Paper (default for documents) |
-| `glossypaper` | Glossy Photo Paper |
-| `glossygold` | Photo Paper Plus Glossy II |
-| `prophoto` | Photo Paper Pro |
-| `semigloss` | Photo Paper Plus Semi-gloss |
-| `matte` | Matte Photo Paper |
-| `highres` | High Resolution Paper |
-| `superphoto` | Photo Paper Plus Glossy |
-| `otherphoto` | Other Photo Paper |
-| `envelope` | Envelope |
-| `postcard` | Hagaki |
-| `ijpostcard` | Ink Jet Hagaki |
-| `tshirt` | T-Shirt Transfers |
-
-### Set Multiple Options at Once
-
-```bash
-# Everyday documents
-lpoptions -p iP100-Canon -o CNQuality=2 -o MediaType=plain -o CNHalftoning=pattern
-
-# High-quality photo print
-lpoptions -p iP100-Canon -o CNQuality=1 -o MediaType=prophoto -o CNHalftoning=ed
-
-# Quick draft
-lpoptions -p iP100-Canon -o CNQuality=3 -o MediaType=plain -o CNHalftoning=pattern
+# Test print
+lpr -P iP100-2 /usr/share/cups/data/testprint
 ```
 
 ---
 
-## All Settings Reference
+## Current Default Settings
 
-### Halftoning (`CNHalftoning`)
+These are the verified maximum-quality settings for the Gutenprint driver on the iP100:
 
-Controls how colors are rendered.
+| Setting | Value | What it does |
+|---------|-------|--------------|
+| `Resolution` | `612x600dpi` | Max resolution available in Gutenprint |
+| `StpColorPrecision` | `Best` | Highest internal color processing |
+| `StpDitherAlgorithm` | `HybridEvenTone` | Smoothest halftoning — best for photos and color |
+| `StpImageType` | `Photo` | Best rendering pipeline |
+| `StpColorCorrection` | `Accurate` | True color matching |
+| `ColorModel` | `RGB` | Full color |
+| `print-color-mode` | `color` | CUPS-level color mode |
+| `PageSize` | `Letter` | US standard paper |
+| `StpInkType` | `CMYK` | Uses all ink channels (Gutenprint default) |
+| `StpInkSet` | `Both` | Uses both black and color cartridges (Gutenprint default) |
+
+---
+
+## Changing Settings
+
+### Paper / Media Type
 
 ```bash
-lpoptions -p iP100-Canon -o CNHalftoning=ed       # Error diffusion (smoother, slower)
-lpoptions -p iP100-Canon -o CNHalftoning=pattern  # Dither pattern (faster)
+lpoptions -p iP100-2 -o MediaType=Plain          # Plain paper (default)
+lpoptions -p iP100-2 -o MediaType=PhotoProPlat   # Photo Paper Pro
+lpoptions -p iP100-2 -o MediaType=PhotoPlusGloss2  # Photo Paper Plus Glossy II
+lpoptions -p iP100-2 -o MediaType=PhotopaperMatte  # Matte Photo Paper
+lpoptions -p iP100-2 -o MediaType=GlossyPaperStandard  # Glossy Photo Paper
 ```
 
-| Value | Description |
-|-------|-------------|
-| `ed` | Error diffusion — smoother gradients, best for photos |
-| `pattern` | Dither pattern — faster, fine for text and documents |
-
-### Color Balance
-
-Adjust individual ink channel intensity. Range: `-50` to `50`, default `0`.
+### Page Size
 
 ```bash
-lpoptions -p iP100-Canon -o CNBalanceC=0   # Cyan
-lpoptions -p iP100-Canon -o CNBalanceM=0   # Magenta
-lpoptions -p iP100-Canon -o CNBalanceY=0   # Yellow
-lpoptions -p iP100-Canon -o CNBalanceK=0   # Black
+lpoptions -p iP100-2 -o PageSize=Letter   # US standard (default)
+lpoptions -p iP100-2 -o PageSize=A4       # International
+lpoptions -p iP100-2 -o PageSize=4X6      # Photo 4x6"
+lpoptions -p iP100-2 -o PageSize=5X7      # Photo 5x7"
 ```
 
-### Intensity / Density (`CNDensity`)
-
-Overall ink density. Range: `-50` to `50`, default `0`. Higher = more ink.
+### Color vs Grayscale
 
 ```bash
-lpoptions -p iP100-Canon -o CNDensity=0
+# Full color (default)
+lpoptions -p iP100-2 -o ColorModel=RGB -o print-color-mode=color
+
+# Grayscale
+lpoptions -p iP100-2 -o ColorModel=Gray -o print-color-mode=monochrome
 ```
 
-### Contrast (`CNContrast`)
-
-Range: `-50` to `50`, default `0`.
+### Image Type (rendering pipeline)
 
 ```bash
-lpoptions -p iP100-Canon -o CNContrast=0
+lpoptions -p iP100-2 -o StpImageType=Photo         # Best for photos (default)
+lpoptions -p iP100-2 -o StpImageType=TextGraphics  # Better for documents/text
+lpoptions -p iP100-2 -o StpImageType=LineArt       # Best for diagrams, charts
 ```
 
-### Brightness / Gamma (`CNGamma`)
+### Dithering Algorithm
 
 ```bash
-lpoptions -p iP100-Canon -o CNGamma=1.4   # Lighter
-lpoptions -p iP100-Canon -o CNGamma=1.8   # Normal (default)
-lpoptions -p iP100-Canon -o CNGamma=2.2   # Darker
-```
-
-### Render Intent (`CNRenderIntent`)
-
-```bash
-lpoptions -p iP100-Canon -o CNRenderIntent=photo   # Default — accurate colors
-lpoptions -p iP100-Canon -o CNRenderIntent=vivid   # Boosted, vibrant colors
-```
-
-### Grayscale Printing
-
-```bash
-lpoptions -p iP100-Canon -o CNGrayscale   # Enable grayscale
-```
-
-### Borderless Printing
-
-Use a borderless page size and set extension amount (how much image bleeds past edge):
-
-```bash
-lpoptions -p iP100-Canon -o PageSize=4X6.bl -o CNExtension=2
-```
-
-`CNExtension` range: `0` (minimum bleed) to `3` (maximum bleed), default `2`.
-
-Borderless page sizes: `letter.bl`, `a4.bl`, `4X6.bl`, `4X8.bl`, `5X7.bl`, `8X10.bl`, `l.bl`, `2l.bl`, `postcard.bl`, `businesscard.bl`, `creditcard.bl`, `wide.bl`
-
-### Copies
-
-```bash
-lpoptions -p iP100-Canon -o CNCopies=2
+lpoptions -p iP100-2 -o StpDitherAlgorithm=HybridEvenTone  # Best quality (default)
+lpoptions -p iP100-2 -o StpDitherAlgorithm=Adaptive        # Good balance
+lpoptions -p iP100-2 -o StpDitherAlgorithm=Fast            # Faster, lower quality
 ```
 
 ---
 
-## Changing Settings via GUI
+## What Actually Affects Quality (in order of impact)
+
+1. **Paper** — the biggest factor. Switching from plain to photo paper makes more difference than any setting.
+2. **MediaType** — must match your actual paper or ink placement will be wrong.
+3. **StpImageType** — use `Photo` for photos, `TextGraphics` for documents.
+4. **StpDitherAlgorithm** — `HybridEvenTone` is the ceiling.
+5. **Resolution** — already at max (`612x600dpi`).
+
+---
+
+## GUI Access
 
 **CUPS Web Interface** — works in any browser:
 ```
 http://localhost:631
 ```
-Go to **Printers → iP100-Canon → Set Default Options**.
+Go to **Printers → iP100-2 → Set Default Options**.
 
-**From a print dialog** (LibreOffice, GNOME Files, etc.):
-Click **Properties** → **Advanced** or **Device Settings** to find Canon-specific options.
+**From a print dialog** (Firefox, LibreOffice, etc.): click **Properties** → look for quality/media options.
 
 ---
 
@@ -180,27 +126,18 @@ Click **Properties** → **Advanced** or **Device Settings** to find Canon-speci
 
 | Spec | Value |
 |------|-------|
-| Max Color Resolution | 9600 × 2400 dpi |
-| Max Black Resolution | 600 × 600 dpi |
-| Paper Feed | Rear tray |
+| Max Color Resolution (hardware) | 9600 × 2400 dpi |
+| Max Resolution via Gutenprint | ~600 dpi |
 | Connection | USB |
-| Driver | cnijfilter 3.70 (Canon official) |
-| CUPS Filter | `pstocanonij` → `cifip100` |
+| Working driver | CUPS+Gutenprint v5.3.4 |
+| Printer queue name | `iP100-2` |
 
 ---
 
-## Setup & Installation
+## Full Restore / Fresh Install
 
-See [INSTALL.md](INSTALL.md) for the full step-by-step installation guide.
-
----
+See [RESTORE.md](RESTORE.md) — written for Claude to reproduce the exact working setup from scratch.
 
 ## Troubleshooting
 
 See [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
-
----
-
-## License
-
-Documentation is MIT licensed. Canon driver binaries belong to Canon Inc.
