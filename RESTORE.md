@@ -192,6 +192,9 @@ lpoptions -p iP100-Canon \
     -o ColorModel=rgb \
     -o print-color-mode=color \
     -o MediaType=plain
+
+# Set as system default so Firefox and other apps auto-select it
+lpoptions -d iP100-Canon
 ```
 
 **Why each one matters:**
@@ -235,3 +238,4 @@ The most common failure causes and fixes are in [TROUBLESHOOTING.md](TROUBLESHOO
 | ColorModel | `rgb` |
 | print-color-mode | `color` |
 | MediaType | `plain` |
+| System default printer | `iP100-Canon` |
