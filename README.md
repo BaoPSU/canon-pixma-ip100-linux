@@ -15,13 +15,13 @@ sudo modprobe -r usblp
 echo "blacklist usblp" | sudo tee /etc/modprobe.d/blacklist-usblp.conf
 
 # Add the printer queue using the iP110 Gutenprint PPD
-sudo lpadmin -p iP100-2 -E \
+sudo lpadmin -p iP100 -E \
     -v "usb://Canon/iP100%20series?serial=10E6AD" \
     -m "gutenprint.5.3://bjc-iP110-series/expert" \
     -D "Canon iP100 series"
 
 # Apply max quality settings
-lpoptions -p iP100-2 \
+lpoptions -p iP100 \
     -o Resolution=612x600dpi \
     -o StpColorPrecision=Best \
     -o StpDitherAlgorithm=HybridEvenTone \
@@ -32,10 +32,10 @@ lpoptions -p iP100-2 \
     -o print-color-mode=color
 
 # Set as system default
-lpoptions -d iP100-2
+lpoptions -d iP100
 
 # Test print
-lpr -P iP100-2 /usr/share/cups/data/testprint
+lpr -P iP100 /usr/share/cups/data/testprint
 ```
 
 ---
@@ -63,37 +63,37 @@ lpr -P iP100-2 /usr/share/cups/data/testprint
 ### Paper / Media Type
 
 ```bash
-lpoptions -p iP100-2 -o MediaType=Plain             # Plain paper (default)
-lpoptions -p iP100-2 -o MediaType=PhotoProPlat      # Photo Paper Pro
-lpoptions -p iP100-2 -o MediaType=PhotoPlusGloss2   # Photo Paper Plus Glossy II
-lpoptions -p iP100-2 -o MediaType=PhotopaperMatte   # Matte Photo Paper
-lpoptions -p iP100-2 -o MediaType=GlossyPaperStandard  # Glossy Photo Paper
+lpoptions -p iP100 -o MediaType=Plain             # Plain paper (default)
+lpoptions -p iP100 -o MediaType=PhotoProPlat      # Photo Paper Pro
+lpoptions -p iP100 -o MediaType=PhotoPlusGloss2   # Photo Paper Plus Glossy II
+lpoptions -p iP100 -o MediaType=PhotopaperMatte   # Matte Photo Paper
+lpoptions -p iP100 -o MediaType=GlossyPaperStandard  # Glossy Photo Paper
 ```
 
 ### Page Size
 
 ```bash
-lpoptions -p iP100-2 -o PageSize=Letter   # US standard (default)
-lpoptions -p iP100-2 -o PageSize=A4       # International
-lpoptions -p iP100-2 -o PageSize=4X6      # Photo 4x6"
-lpoptions -p iP100-2 -o PageSize=5X7      # Photo 5x7"
+lpoptions -p iP100 -o PageSize=Letter   # US standard (default)
+lpoptions -p iP100 -o PageSize=A4       # International
+lpoptions -p iP100 -o PageSize=4X6      # Photo 4x6"
+lpoptions -p iP100 -o PageSize=5X7      # Photo 5x7"
 ```
 
 ### Printing Photos vs Documents
 
 ```bash
 # For photos — more ink, smoother gradients
-lpoptions -p iP100-2 -o StpImageType=Photo -o StpDensity=None
+lpoptions -p iP100 -o StpImageType=Photo -o StpDensity=None
 
 # For documents — default, less ink, sharper text
-lpoptions -p iP100-2 -o StpImageType=TextGraphics -o StpDensity=800
+lpoptions -p iP100 -o StpImageType=TextGraphics -o StpDensity=800
 ```
 
 ### Color vs Grayscale
 
 ```bash
-lpoptions -p iP100-2 -o ColorModel=RGB -o print-color-mode=color       # Color
-lpoptions -p iP100-2 -o ColorModel=Gray -o print-color-mode=monochrome # Grayscale
+lpoptions -p iP100 -o ColorModel=RGB -o print-color-mode=color       # Color
+lpoptions -p iP100 -o ColorModel=Gray -o print-color-mode=monochrome # Grayscale
 ```
 
 ---
@@ -104,7 +104,7 @@ lpoptions -p iP100-2 -o ColorModel=Gray -o print-color-mode=monochrome # Graysca
 ```
 http://localhost:631
 ```
-Go to **Printers → iP100-2 → Set Default Options**.
+Go to **Printers → iP100 → Set Default Options**.
 
 ---
 
@@ -116,7 +116,7 @@ Go to **Printers → iP100-2 → Set Default Options**.
 | Max resolution via Gutenprint | ~600 dpi |
 | Connection | USB |
 | Working driver | iP110 CUPS+Gutenprint v5.3.4 |
-| Printer queue name | `iP100-2` |
+| Printer queue name | `iP100` |
 
 ---
 

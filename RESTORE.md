@@ -7,9 +7,9 @@ This file is written for Claude. If the Canon PIXMA iP100 stops working or needs
 ## What Needs to Be in Place
 
 1. `usblp` kernel module is blacklisted
-2. CUPS printer queue `iP100-2` exists using the iP110 Gutenprint PPD
+2. CUPS printer queue `iP100` exists using the iP110 Gutenprint PPD
 3. Default settings are applied
-4. `iP100-2` is set as the system default printer
+4. `iP100` is set as the system default printer
 
 Check the current state before doing anything:
 
@@ -19,7 +19,7 @@ cat /etc/modprobe.d/blacklist-usblp.conf
 lsmod | grep usblp
 
 # Is the printer queue there?
-lpstat -p iP100-2
+lpstat -p iP100
 
 # Is it the system default?
 lpstat -d
@@ -63,7 +63,7 @@ The driver used is the **iP110 Gutenprint PPD** — not the iP100 one. The iP100
 Use a subshell to detect the serial number automatically:
 
 ```bash
-sudo lpadmin -p iP100-2 -E \
+sudo lpadmin -p iP100 -E \
     -v "$(lpinfo -v | grep -i 'ip100' | awk '{print $2}')" \
     -m "gutenprint.5.3://bjc-iP110-series/expert" \
     -D "Canon iP100 series"
@@ -72,8 +72,8 @@ sudo lpadmin -p iP100-2 -E \
 Verify it picked up the right URI:
 
 ```bash
-lpstat -v iP100-2
-# should show: device for iP100-2: usb://Canon/iP100%20series?serial=XXXXXX
+lpstat -v iP100
+# should show: device for iP100: usb://Canon/iP100%20series?serial=XXXXXX
 ```
 
 ---
@@ -81,7 +81,7 @@ lpstat -v iP100-2
 ## 4 — Apply Default Settings
 
 ```bash
-lpoptions -p iP100-2 \
+lpoptions -p iP100 \
     -o Resolution=612x600dpi \
     -o StpColorPrecision=Best \
     -o StpDitherAlgorithm=HybridEvenTone \
@@ -91,7 +91,7 @@ lpoptions -p iP100-2 \
     -o ColorModel=RGB \
     -o print-color-mode=color
 
-lpoptions -d iP100-2
+lpoptions -d iP100
 ```
 
 **Why each setting:**
@@ -106,14 +106,14 @@ lpoptions -d iP100-2
 | `StpDensity` | `800` | 80% ink — prevents bleed-through on plain paper |
 | `ColorModel` | `RGB` | Full color |
 | `print-color-mode` | `color` | CUPS-level color — must be set or CUPS defaults to monochrome |
-| System default | `iP100-2` | So Firefox and other apps auto-select it |
+| System default | `iP100` | So Firefox and other apps auto-select it |
 
 ---
 
 ## 5 — Verify Everything Works
 
 ```bash
-lpr -P iP100-2 /usr/share/cups/data/testprint
+lpr -P iP100 /usr/share/cups/data/testprint
 ```
 
 The printer should make a sound within a few seconds and print a color test page. Watch progress:
@@ -144,11 +144,11 @@ A broken job (usblp not blacklisted) looks like:
 | Item | Value |
 |------|-------|
 | OS | Ubuntu 24.04 (Noble) |
-| Printer queue | `iP100-2` |
+| Printer queue | `iP100` |
 | Driver | iP110 CUPS+Gutenprint v5.3.4 (`gutenprint.5.3://bjc-iP110-series/expert`) |
 | Device URI | `usb://Canon/iP100%20series?serial=10E6AD` |
 | usblp blacklist | `/etc/modprobe.d/blacklist-usblp.conf` |
-| System default | `iP100-2` |
+| System default | `iP100` |
 | Resolution | `612x600dpi` |
 | StpColorPrecision | `Best` |
 | StpDitherAlgorithm | `HybridEvenTone` |
