@@ -1,6 +1,8 @@
 # Setup Guide — Canon PIXMA iP100 on Ubuntu 24.04
 
-Step-by-step instructions for a human. No prior Linux printing knowledge needed.
+> **Easier option:** Use an AI agent with terminal access like [Claude Code](https://claude.ai/code). Clone this repo, open it in Claude Code, and say _"read RESTORE.md and set up my Canon iP100 printer."_ It will run all the steps for you automatically.
+
+Step-by-step instructions for doing it yourself. No prior Linux printing knowledge needed.
 
 ---
 

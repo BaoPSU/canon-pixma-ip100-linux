@@ -4,6 +4,17 @@ Setup guide for the Canon PIXMA iP100 using the **iP110 CUPS+Gutenprint driver**
 
 ---
 
+## Recommended: Use an AI Agent
+
+The easiest way to set this up is with an AI that can directly run commands on your machine. It can read this repo and follow it automatically without you typing anything.
+
+- **[Claude Code](https://claude.ai/code)** (recommended) — Anthropic's CLI tool. Install it, clone this repo, and tell it: _"read RESTORE.md and set up my Canon iP100 printer."_ It will handle everything.
+- Any other AI coding assistant that has terminal access works the same way.
+
+If you prefer to do it yourself, follow [SETUP.md](SETUP.md).
+
+---
+
 ## Quick Start
 
 ```bash
