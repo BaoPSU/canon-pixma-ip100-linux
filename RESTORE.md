@@ -58,22 +58,23 @@ ls /dev/usb/lp* 2>/dev/null # must print nothing
 
 ## 3 — Add the CUPS Printer Queue
 
-The printer's USB serial number is `10E6AD`. The driver used is the **iP110 Gutenprint PPD** — not the iP100 one. The iP100 and iP110 are close enough hardware that the iP110 driver works and is more reliable.
+The driver used is the **iP110 Gutenprint PPD** — not the iP100 one. The iP100 and iP110 are close enough hardware that the iP110 driver works and is more reliable.
+
+Use a subshell to detect the serial number automatically:
 
 ```bash
 sudo lpadmin -p iP100-2 -E \
-    -v "usb://Canon/iP100%20series?serial=10E6AD" \
+    -v "$(lpinfo -v | grep -i 'ip100' | awk '{print $2}')" \
     -m "gutenprint.5.3://bjc-iP110-series/expert" \
     -D "Canon iP100 series"
 ```
 
-**Always verify the serial number before running this command:**
+Verify it picked up the right URI:
 
 ```bash
-lpinfo -v | grep -i ip100
+lpstat -v iP100-2
+# should show: device for iP100-2: usb://Canon/iP100%20series?serial=XXXXXX
 ```
-
-Use whatever serial appears after `serial=` in that output. The serial on this machine is `10E6AD` but it will differ if the printer unit has been replaced.
 
 ---
 

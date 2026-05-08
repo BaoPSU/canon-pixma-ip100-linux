@@ -42,43 +42,18 @@ The first command disables it right now. The second makes sure it stays disabled
 
 ---
 
-## Step 3 — Find Your Printer's Serial Number
+## Step 3 — Add the Printer
 
-Run:
-
-```bash
-lpinfo -v | grep -i ip100
-```
-
-You should see something like:
-
-```
-direct usb://Canon/iP100%20series?serial=10E6AD
-```
-
-The part after `serial=` is your serial number. **Write it down** — you need it in the next step.
-
----
-
-## Step 4 — Add the Printer
-
-Copy this command and replace `YOUR_SERIAL` with the serial number you found above:
+This command detects your printer's serial number automatically and adds it in one go:
 
 ```bash
 sudo lpadmin -p iP100-2 -E \
-    -v "usb://Canon/iP100%20series?serial=YOUR_SERIAL" \
+    -v "$(lpinfo -v | grep -i 'ip100' | awk '{print $2}')" \
     -m "gutenprint.5.3://bjc-iP110-series/expert" \
     -D "Canon iP100 series"
 ```
 
-For example if your serial is `10E6AD` it would be:
-
-```bash
-sudo lpadmin -p iP100-2 -E \
-    -v "usb://Canon/iP100%20series?serial=10E6AD" \
-    -m "gutenprint.5.3://bjc-iP110-series/expert" \
-    -D "Canon iP100 series"
-```
+If that prints an error, make sure the printer is on and the USB cable is plugged in, then try again.
 
 ---
 
