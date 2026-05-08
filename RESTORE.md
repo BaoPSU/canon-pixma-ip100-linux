@@ -10,7 +10,7 @@ There are two driver options. Use **Gutenprint** (`iP100-2`) — it is the relia
 
 | Queue | Driver | Status | Use |
 |-------|--------|--------|-----|
-| `iP100-2` | Gutenprint (CUPS+Gutenprint v5.3.4) | **Working — use this** | Daily driver |
+| `iP100-2` | iP110 Gutenprint (CUPS+Gutenprint v5.3.4) | **Working — use this** | Daily driver |
 | `iP100-Canon` | cnijfilter 3.70 (Canon official) | Broken on Ubuntu 24.04 | Do not use |
 
 ---
@@ -63,20 +63,14 @@ ls /dev/usb/lp* 2>/dev/null  # must print nothing
 
 ## 2 — Add the CUPS Printer Queue
 
-The printer's USB serial number is `10E6AD`. The Gutenprint PPD for the iP100 is provided by the `printer-driver-gutenprint` package (install with `sudo apt install printer-driver-gutenprint` if missing).
-
-Find the correct PPD:
-
-```bash
-lpinfo -m | grep -i "ip100\|ip110"
-```
+The printer's USB serial number is `10E6AD`. The **iP110 Gutenprint PPD** is used — not the iP100 one. The iP100 and iP110 are close enough hardware that the iP110 driver works and is more reliable. Requires `printer-driver-gutenprint` (`sudo apt install printer-driver-gutenprint` if missing).
 
 Add the printer:
 
 ```bash
 sudo lpadmin -p iP100-2 -E \
     -v "usb://Canon/iP100%20series?serial=10E6AD" \
-    -m "gutenprint.5.3://bjc-i100/expert" \
+    -m "gutenprint.5.3://bjc-iP110-series/expert" \
     -D "Canon iP100 series"
 ```
 
@@ -169,7 +163,7 @@ The Canon cnijfilter 3.70 driver is installed (`cnijfilter-common` and `cnijfilt
 |------|-------|
 | OS | Ubuntu 24.04 (Noble) |
 | Working printer queue | `iP100-2` |
-| Driver | CUPS+Gutenprint v5.3.4 |
+| Driver | iP110 CUPS+Gutenprint v5.3.4 (`gutenprint.5.3://bjc-iP110-series/expert`) |
 | Device URI | `usb://Canon/iP100%20series?serial=10E6AD` |
 | usblp blacklist | `/etc/modprobe.d/blacklist-usblp.conf` |
 | System default printer | `iP100-2` |
