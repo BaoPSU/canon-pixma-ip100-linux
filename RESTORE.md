@@ -67,11 +67,13 @@ sudo lpadmin -p iP100-2 -E \
     -D "Canon iP100 series"
 ```
 
-If the serial number differs (printer replaced), find the right URI first:
+**Always verify the serial number before running this command:**
 
 ```bash
 lpinfo -v | grep -i ip100
 ```
+
+Use whatever serial appears after `serial=` in that output. The serial on this machine is `10E6AD` but it will differ if the printer unit has been replaced.
 
 ---
 
