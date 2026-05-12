@@ -112,6 +112,38 @@ lpoptions -p iP100-Canon -o CNQuality=3 -o MediaType=plain -o CNHalftoning=patte
 - CUPS web UI: `http://localhost:631` → Printers → iP100-Canon → Set Default Options
 - App print dialogs: Properties → Advanced or Device Settings
 
+## Manual Duplex Printing — `scripts/duplex-print`
+
+The iP100 is a one-sided printer. For two-sided output, install the helper script:
+
+```bash
+install -m 755 scripts/duplex-print ~/.local/bin/duplex-print
+```
+
+Usage:
+
+```bash
+duplex-print path/to/document.pdf
+```
+
+What it does:
+1. Splits the PDF into odd pages (1, 3, 5, ...) and **reversed** even pages (..., 6, 4, 2). The reversed order is correct for the iP100 since it outputs **face-up**.
+2. Submits the odd pages to the printer via `lp`.
+3. Pauses and tells you to pancake-flip the stack (printed sides face DOWN, blank backs UP) and reload it.
+4. Submits the reversed even pages so they land on the correct backs.
+5. Final output stack is in reading order 1, 2, 3, 4, ...
+
+Handles odd page counts automatically by inserting a blank into the even-pages PDF so the last odd page comes out with a blank back.
+
+Flags:
+- `-P printer` — pick a non-default printer
+- `--no-reverse-even` — use forward 2,4,6,... order (for face-down printers)
+- `--no-prompt` — skip the flip prompt (use only after the queue is empty)
+
+Requires `python3-fitz` (PyMuPDF) and `lp`/`lpstat` from `cups-client`.
+
+---
+
 ## Filter Chain
 
 CUPS sends jobs through: `pdftops` → `pstocanonij` → `cifip100` → USB backend
