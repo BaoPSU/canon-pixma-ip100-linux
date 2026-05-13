@@ -85,9 +85,10 @@ lpoptions -p iP100 \
     -o Resolution=612x600dpi \
     -o StpColorPrecision=Best \
     -o StpDitherAlgorithm=HybridEvenTone \
-    -o StpImageType=TextGraphics \
+    -o StpImageType=Photo \
     -o StpColorCorrection=Accurate \
-    -o StpDensity=800 \
+    -o StpDensity=None \
+    -o MediaType=PhotopaperMatte \
     -o ColorModel=RGB \
     -o print-color-mode=color
 
@@ -101,9 +102,10 @@ lpoptions -d iP100
 | `Resolution` | `612x600dpi` | Max available in Gutenprint |
 | `StpColorPrecision` | `Best` | Highest internal color processing |
 | `StpDitherAlgorithm` | `HybridEvenTone` | Smoothest halftoning |
-| `StpImageType` | `TextGraphics` | Tuned for plain paper documents |
+| `StpImageType` | `Photo` | Photo rendering pipeline — best ink saturation for dark areas |
 | `StpColorCorrection` | `Accurate` | True color matching |
-| `StpDensity` | `800` | 80% ink — prevents bleed-through on plain paper |
+| `StpDensity` | `None` | Unlimited ink density — pushes blacks darker and grays sharper |
+| `MediaType` | `PhotopaperMatte` | Lies to driver about paper type so it lays denser ink — gives notably darker blacks and crisper grays on plain paper. Trade-off: more ink per page, slight bleed risk on thin paper |
 | `ColorModel` | `RGB` | Full color |
 | `print-color-mode` | `color` | CUPS-level color — must be set or CUPS defaults to monochrome |
 | System default | `iP100` | So Firefox and other apps auto-select it |
@@ -152,9 +154,10 @@ A broken job (usblp not blacklisted) looks like:
 | Resolution | `612x600dpi` |
 | StpColorPrecision | `Best` |
 | StpDitherAlgorithm | `HybridEvenTone` |
-| StpImageType | `TextGraphics` |
+| StpImageType | `Photo` |
 | StpColorCorrection | `Accurate` |
-| StpDensity | `800` |
+| StpDensity | `None` (unlimited) |
+| MediaType | `PhotopaperMatte` (lies to driver — pushes more ink on plain paper for darker blacks) |
 | ColorModel | `RGB` |
 | print-color-mode | `color` |
 | PageSize | `Letter` |

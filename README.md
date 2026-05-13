@@ -58,9 +58,10 @@ lpr -P iP100 /usr/share/cups/data/testprint
 | `Resolution` | `612x600dpi` | Max resolution available via Gutenprint |
 | `StpColorPrecision` | `Best` | Highest internal color processing |
 | `StpDitherAlgorithm` | `HybridEvenTone` | Smoothest halftoning |
-| `StpImageType` | `TextGraphics` | Tuned for documents on plain paper |
+| `StpImageType` | `Photo` | Photo rendering — best ink saturation for dark areas |
 | `StpColorCorrection` | `Accurate` | True color matching |
-| `StpDensity` | `800` | 80% ink density — prevents bleed on plain paper |
+| `StpDensity` | `None` | Unlimited ink density — darker blacks, crisper grays |
+| `MediaType` | `PhotopaperMatte` | Lies to driver so it lays denser ink on plain paper. Visibly darker blacks. Trade-off: more ink per page, slight bleed risk on thin paper |
 | `ColorModel` | `RGB` | Full color |
 | `print-color-mode` | `color` | CUPS-level color mode |
 | `PageSize` | `Letter` | US standard paper |
